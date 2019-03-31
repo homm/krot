@@ -1,17 +1,16 @@
 from __future__ import print_function, absolute_import, unicode_literals
 
-from functools import reduce
 import pytest
 from PIL import Image
 
-from .krot.transposition import transpose_table, combine_transpositions
+from .krot.geometry import *
 from .krot import (FLIP_LEFT_RIGHT, FLIP_TOP_BOTTOM, ROTATE_90, ROTATE_180,
                    ROTATE_270, TRANSPOSE, TRANSVERSE)
 
 
 @pytest.fixture(scope="module")
 def transposition_image():
-    im = Image.new('L', (10, 6), "black")
+    im = Image.new("L", (10, 6), "black")
     im.load()[3, 1] = 255
     return im
 
@@ -53,7 +52,6 @@ def transposition_image():
     ([ROTATE_90, TRANSPOSE], FLIP_LEFT_RIGHT),
     ([ROTATE_90, TRANSVERSE], FLIP_TOP_BOTTOM),
 
-
     ([ROTATE_180, None], ROTATE_180),
     ([ROTATE_180, FLIP_LEFT_RIGHT], FLIP_TOP_BOTTOM),
     ([ROTATE_180, FLIP_TOP_BOTTOM], FLIP_LEFT_RIGHT),
@@ -90,6 +88,8 @@ def transposition_image():
     ([TRANSVERSE, TRANSPOSE], ROTATE_180),
     ([TRANSVERSE, TRANSVERSE], None),
 
+    ([], None),
+    ([None], None),
     ([FLIP_LEFT_RIGHT, FLIP_TOP_BOTTOM, ROTATE_90,
       ROTATE_180, ROTATE_270, TRANSPOSE, TRANSVERSE], ROTATE_180),
 ])
@@ -105,8 +105,4 @@ def test_transposition_combinations(transposition_image, pipe, resulting_method)
             transposition_image = transposition_image.transpose(method)
     assert transposition_image == resulting_image
 
-    resulting_transposition = reduce(
-        combine_transpositions,
-        map(transpose_table.get, pipe),
-        transpose_table[None])
-    assert resulting_transposition == transpose_table[resulting_method]
+    assert combine_transposition_methods(pipe) == resulting_method

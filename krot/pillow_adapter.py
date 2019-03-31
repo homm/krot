@@ -2,13 +2,12 @@ from __future__ import print_function, absolute_import, unicode_literals
 
 from PIL import Image
 
-from .transposition import (FLIP_LEFT_RIGHT, FLIP_TOP_BOTTOM, ROTATE_90,
-                            ROTATE_180, ROTATE_270, TRANSPOSE, TRANSVERSE)
+from .geometry import *
 
 
 class PillowAdapter(object):
     separable_resize = True
-    transpose_collation = {
+    _transpose_collation = {
         FLIP_LEFT_RIGHT: Image.FLIP_LEFT_RIGHT,
         FLIP_TOP_BOTTOM: Image.FLIP_TOP_BOTTOM,
         ROTATE_90: Image.ROTATE_90,
@@ -21,7 +20,7 @@ class PillowAdapter(object):
     @classmethod
     def get_image_stats(cls, image):
         if not isinstance(im, Image):
-            raise TypeError('image should be an PIL.Image')
+            raise TypeError("image should be an PIL.Image")
         return image.size, image.mode
 
     @classmethod
@@ -30,6 +29,6 @@ class PillowAdapter(object):
 
     @classmethod
     def transpose_image(cls, image, method):
-        if method:
-            image = image.transpose(cls.transpose_collation.get(method))
+        if method is not None:
+            image = image.transpose(cls._transpose_collation.get(method))
         return image

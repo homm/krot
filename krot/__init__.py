@@ -1,12 +1,11 @@
 from __future__ import print_function, absolute_import, unicode_literals
 
-from .transposition import (FLIP_LEFT_RIGHT, FLIP_TOP_BOTTOM, ROTATE_90,
-                            ROTATE_180, ROTATE_270, TRANSPOSE, TRANSVERSE)
+from .geometry import *
 try:
-    from .pillow_adapter import PillowAdapter
+    from .pillow_adapter import PillowAdapter as DefaultAdapter
 except ImportError:
     # No default adapter in this case, should be defined in constructor
-    PillowAdapter = None
+    DefaultAdapter = None
 
 
 class DefaultPolicy(object):
@@ -18,7 +17,7 @@ class Krot(object):
     policy = DefaultPolicy
 
     # Adapter for the graphics library plus some performance stats
-    adapter = PillowAdapter
+    adapter = DefaultAdapter
 
     def __init__(self, image, policy=None, adapter=None):
         self.calls = []
@@ -36,7 +35,7 @@ class Krot(object):
 
     def transpose(self, method):
         if method is not None:
-            self.calls.append({'transpose': method})
+            self.calls.append({"transpose": method})
 
-    def resize(self, size, enlarge=True):
+    def resize(self, width, height, method=CONTAIN, enlarge=True):
         pass

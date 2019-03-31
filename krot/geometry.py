@@ -1,16 +1,31 @@
 from __future__ import print_function, absolute_import, unicode_literals
 
+from functools import reduce
 from collections import namedtuple
 
 
-# Transposition methods
-(FLIP_LEFT_RIGHT, FLIP_TOP_BOTTOM, ROTATE_90, ROTATE_180, ROTATE_270,
- TRANSPOSE, TRANSVERSE) = range(7)
+_consts = (
+    # Transposition methods
+    "FLIP_LEFT_RIGHT FLIP_TOP_BOTTOM ROTATE_90 ROTATE_180 ROTATE_270 "
+    "TRANSPOSE TRANSVERSE "
+    # Resize methods
+    "CONTAIN CHANGE_RATIO SCALE_CROP ADD_PADDING "
+).strip().split(" ")
 
-Transposition = namedtuple('Transposition',
-                           'transpose flip_horizontal flip_vertical')
+__all__ = _consts + (
+    "Transposition combine_transpositions transpose_methods_table "
+    "combine_transposition_methods "
+).strip().split(" ")
 
-transpose_table = {
+for _index, _name in enumerate(_consts):
+    globals()[_name] = _index
+del _index, _name, _consts
+
+
+Transposition = namedtuple("Transposition",
+                           "transpose flip_horizontal flip_vertical")
+
+transpose_methods_table = {
     None:            Transposition(False, False, False),
     FLIP_LEFT_RIGHT: Transposition(False, True, False),
     FLIP_TOP_BOTTOM: Transposition(False, False, True),
@@ -23,8 +38,8 @@ transpose_table = {
 
 
 def find_transposition_method(transposition):
-    for method in transpose_table:
-        if transpose_table[method] == transposition:
+    for method in transpose_methods_table:
+        if transpose_methods_table[method] == transposition:
             return method
     raise ValueError(
         "A method for transposition {} is not found".format(transposition))
@@ -42,7 +57,8 @@ def combine_transpositions(first, second):
     )
 
 
-def combine_transposition_methods(first, second):
-    return find_transposition_method(
-        combine_transpositions(
-            transpose_table[first], transpose_table[second]))
+def combine_transposition_methods(methods):
+    return find_transposition_method(reduce(
+        combine_transpositions,
+        map(transpose_methods_table.get, methods),
+        transpose_methods_table[None]))
