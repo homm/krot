@@ -4,7 +4,7 @@ from functools import reduce
 import pytest
 from PIL import Image
 
-from .krot import transpose_table, combine_transpositions, Transposition
+from .krot.transposition import transpose_table, combine_transpositions
 from .krot import (FLIP_LEFT_RIGHT, FLIP_TOP_BOTTOM, ROTATE_90, ROTATE_180,
                    ROTATE_270, TRANSPOSE, TRANSVERSE)
 
@@ -108,5 +108,5 @@ def test_transposition_combinations(transposition_image, pipe, resulting_method)
     resulting_transposition = reduce(
         combine_transpositions,
         map(transpose_table.get, pipe),
-        Transposition(False, False, False))
+        transpose_table[None])
     assert resulting_transposition == transpose_table[resulting_method]
