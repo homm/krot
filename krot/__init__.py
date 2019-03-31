@@ -1,6 +1,6 @@
 from __future__ import print_function, absolute_import, unicode_literals
 
-from .geometry import *
+from .geometry import TranspositionMethod, ResizeMethod
 try:
     from .pillow_adapter import PillowAdapter as DefaultAdapter
 except ImportError:
@@ -37,5 +37,5 @@ class Krot(object):
         if method is not None:
             self.calls.append({"transpose": method})
 
-    def resize(self, width, height, method=CONTAIN, enlarge=True):
+    def resize(self, width, height, method=ResizeMethod.CONTAIN, enlarge=True):
         pass
