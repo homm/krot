@@ -110,4 +110,3 @@ def test_transposition_combinations(transposition_image, pipe, resulting_method)
         map(transpose_table.get, pipe),
         Transposition(False, False, False))
     assert resulting_transposition == transpose_table[resulting_method]
-
